@@ -23,7 +23,7 @@ class MotionControllerNewportESP300(object):
         """Turn motor on, axis is int."""
         self.write(f'{axis:d}MO')
         
-    def move(self, axis, mm, block=True):
+    def move(self, axis, mm, block=True, wait_safety_factor=2):
         """Move relative in millimeters"""
         self.write(f'{axis:d}PR{mm:.5f}')
         if block:
@@ -36,14 +36,14 @@ class MotionControllerNewportESP300(object):
             d_a = 0.5 * v * t_a # mm
             # Distance less than acceleration distance
             if abs(mm) < d_a:
-                t_tot = sqrt(0.5 * mm / a)
+                t_tot = sqrt(0.5 * abs(mm) / a)
             # Distance greater than acceleration distance (max velocity reached)
             else:
                 t_tot = (mm - d_a)/v + t_a
-            sleep(t_tot)
+            sleep(wait_safety_factor * abs(t_tot))
         
-    def move_um(self, axis, um, block=True):
-        return self.move(axis, um / 1000, block)
+    def move_um(self, axis, um, block=True, wait_safety_factor=2):
+        return self.move(axis, um / 1000, block, wait_safety_factor)
 
 if __name__ == '__main__':
     import visa as vs
