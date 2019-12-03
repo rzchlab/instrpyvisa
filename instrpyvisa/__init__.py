@@ -5,3 +5,4 @@ __author__ = 'collaboration'
 
 from .agilent_33220a import FuncGenAgilent33220
 from .newportesp300 import MotionControllerNewportESP300
+from .srs830 import LockInAmpSrs830

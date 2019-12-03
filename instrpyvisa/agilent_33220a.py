@@ -25,7 +25,7 @@ class FuncGenAgilent33220(object):
         """Turn output on (state=1) or off (state=0)."""
         self.outp(0)
 
-    def setup_sin(self, freq, vpp, offset):
+    def setup_sin(self, freq, vpp, offset, highz=True):
         """
         Setup a sin wave output
 
@@ -34,6 +34,8 @@ class FuncGenAgilent33220(object):
             vpp: peak to peak voltage
             offset: offset in volts
         """
+        if highz:
+            self.output_load_inf()
         cmd = (f"FUNC SIN; FREQ {freq:.3f}; VOLT {vpp:.3f};"
                f" VOLT:OFFS {offset:.3f};")
         self.instr.write(cmd)
@@ -42,6 +44,10 @@ class FuncGenAgilent33220(object):
         """Change offset votage"""
         cmd = f" VOLT:OFFS {v_offset:.3f};"
         self.write(cmd)
+        
+    def output_load_inf(self):
+        """Set the output load to high-z."""
+        self.write(':output:load infinity;')
 
     def write(self, cmd):
         self.instr.write(cmd)
